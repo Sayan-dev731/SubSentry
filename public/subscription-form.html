@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Form - SubSentry</title>
+    <!-- Unified Webflow-inspired Design System -->
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon"
+        href="https://cdn.prod.website-files.com/684921398ad5291c317572ef/685126210f7c45cad6d907fb_frame_1321317468%20(2).webp"
+        type="image/x-icon">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-logo">SubSentry</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html" class="btn btn-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="form-container">
+            <div class="form-header">
+                <h2 class="form-title" id="form-title">Add Subscription</h2>
+                <p class="form-subtitle">Enter the details of your subscription</p>
+            </div>
+
+            <form id="subscription-form" class="subscription-form">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="name">Service Name</label>
+                        <input type="text" id="name" class="form-control"
+                            placeholder="e.g., Netflix, Spotify, Adobe Creative Cloud" required maxlength="100">
+                        <span class="form-hint">The name of the service or subscription</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cost">Monthly Cost</label>
+                        <div class="input-group">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="cost" class="form-control" placeholder="0.00" step="0.01" min="0"
+                                required>
+                        </div>
+                        <span class="form-hint">Enter the monthly subscription cost</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="renewal_date">Renewal Date</label>
+                        <input type="date" id="renewal_date" class="form-control" required>
+                        <span class="form-hint">When does this subscription renew?</span>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="reminder_offset_days">Reminder Days</label>
+                        <input type="number" id="reminder_offset_days" class="form-control" value="7" min="0" max="30"
+                            required>
+                        <span class="form-hint">Get notified this many days before renewal</span>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="website_url">Website URL (Optional)</label>
+                        <input type="url" id="website_url" class="form-control" placeholder="https://example.com">
+                        <span class="form-hint" id="url-hint">Optional website link for this subscription</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-text" id="submit-text">Add Subscription</span>
+                        <span class="btn-loader" style="display: none;"></span>
+                    </button>
+                </div>
+
+                <div id="form-error" class="error-message" style="display: none;"></div>
+                <div id="form-success" class="success-message" style="display: none;"></div>
+            </form>
+        </div>
+    </main>
+
+    <script src="main.js"></script>
+    <script src="subscription-logos.js"></script>
+    <script>
+        // Initialize form
+        checkAuth();
+        initSubscriptionForm();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email - SubSentry</title>
+    <!-- Unified Webflow-inspired Design System -->
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon"
+        href="https://cdn.prod.website-files.com/684921398ad5291c317572ef/685126210f7c45cad6d907fb_frame_1321317468%20(2).webp"
+        type="image/x-icon">
+</head>
+
+<body>
+    <div class="container">
+        <div class="auth-wrapper">
+            <div class="auth-header">
+                <h1 class="logo">SubSentry</h1>
+                <p class="tagline">Email Verification</p>
+            </div>
+
+            <div class="auth-card">
+                <!-- Loading State -->
+                <div id="loading-state" class="verification-state" style="text-align: center;">
+                    <div class="loader" style="margin: 20px auto;"></div>
+                    <p style="color: var(--color-gray-600); margin-top: 16px;">Verifying your email...</p>
+                </div>
+
+                <!-- Success State -->
+                <div id="success-state" class="verification-state" style="display: none; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+                    <h2 style="color: var(--color-success); margin-bottom: 12px;">Email Verified!</h2>
+                    <p style="color: var(--color-gray-600); margin-bottom: 24px;">
+                        Your email has been successfully verified. You can now access all features.
+                    </p>
+                    <button onclick="window.location.href='/dashboard'" class="btn btn-primary" style="width: 100%;">
+                        Go to Dashboard
+                    </button>
+                </div>
+
+                <!-- Error State -->
+                <div id="error-state" class="verification-state" style="display: none; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">❌</div>
+                    <h2 style="color: var(--color-danger); margin-bottom: 12px;">Verification Failed</h2>
+                    <p id="error-message" style="color: var(--color-gray-600); margin-bottom: 24px;">
+                        The verification link is invalid or has expired.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button onclick="showResendForm()" class="btn btn-primary" style="width: 100%;">
+                            Resend Verification Email
+                        </button>
+                        <button onclick="window.location.href='/'" class="btn btn-secondary" style="width: 100%;">
+                            Back to Login
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Resend Form -->
+                <div id="resend-form" style="display: none;">
+                    <h3 style="margin-bottom: 20px; text-align: center;">Resend Verification Email</h3>
+                    <form id="resend-verification-form">
+                        <div class="form-group">
+                            <label for="resend-email">Email Address</label>
+                            <input type="email" id="resend-email" class="form-control" placeholder="your@email.com"
+                                required autocomplete="email">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            <span class="btn-text">Send Verification Email</span>
+                            <span class="btn-loader" style="display: none;"></span>
+                        </button>
+
+                        <div id="resend-error" class="error-message" style="display: none; margin-top: 16px;"></div>
+                        <div id="resend-success" class="success-message" style="display: none; margin-top: 16px;"></div>
+                    </form>
+
+                    <button onclick="hideResendForm()" class="btn btn-secondary" style="width: 100%; margin-top: 12px;">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+    <script>
+        // Get token from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        async function verifyEmail() {
+            if (!token) {
+                showError('No verification token provided');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/verify-email/${token}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Update user data in localStorage if logged in
+                    if (getToken()) {
+                        const user = getUser();
+                        if (user) {
+                            user.is_verified = true;
+                            setUser(user);
+                        }
+                    }
+                    showSuccess();
+                } else {
+                    showError(data.message || 'Verification failed');
+                }
+            } catch (error) {
+                console.error('Verification error:', error);
+                showError('Network error. Please check your connection and try again.');
+            }
+        }
+
+        function showSuccess() {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('success-state').style.display = 'block';
+            document.getElementById('error-state').style.display = 'none';
+            document.getElementById('resend-form').style.display = 'none';
+        }
+
+        function showError(message) {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('success-state').style.display = 'none';
+            document.getElementById('error-state').style.display = 'block';
+            document.getElementById('resend-form').style.display = 'none';
+            document.getElementById('error-message').textContent = message;
+        }
+
+        function showResendForm() {
+            document.getElementById('error-state').style.display = 'none';
+            document.getElementById('resend-form').style.display = 'block';
+        }
+
+        function hideResendForm() {
+            document.getElementById('error-state').style.display = 'block';
+            document.getElementById('resend-form').style.display = 'none';
+        }
+
+        // Handle resend form submission
+        document.getElementById('resend-verification-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('resend-email').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const errorDiv = document.getElementById('resend-error');
+            const successDiv = document.getElementById('resend-success');
+
+            // Hide previous messages
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            showLoader(submitBtn);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/resend-verification`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    successDiv.textContent = data.message;
+                    successDiv.style.display = 'block';
+                    document.getElementById('resend-verification-form').reset();
+                } else {
+                    errorDiv.textContent = data.message || 'Failed to send verification email';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Resend error:', error);
+                errorDiv.textContent = 'Network error. Please try again.';
+                errorDiv.style.display = 'block';
+            } finally {
+                hideLoader(submitBtn);
+            }
+        });
+
+        // Start verification process
+        verifyEmail();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,656 @@
+<!-- Verification Modal Component -->
+<!-- Unified Design System - Webflow Inspired -->
+
+<style>
+    /* Modern Modal Overlay */
+    .verification-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        animation: fadeIn 0.3s ease;
+        padding: 20px;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    /* Modern Modal Card */
+    .verification-modal {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 520px;
+        width: 100%;
+        overflow: hidden;
+        animation: slideUp 0.4s ease;
+        position: relative;
+    }
+
+    /* Header with gradient */
+    .verification-modal-header {
+        background: linear-gradient(135deg, #0078D4 0%, #106EBE 50%, #005A9E 100%);
+        padding: 32px 32px 28px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .verification-modal-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+    }
+
+    .verification-modal-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        position: relative;
+        animation: pulse 2s infinite;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .verification-modal-icon svg {
+        width: 40px;
+        height: 40px;
+        fill: #ffffff;
+    }
+
+    .verification-modal-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #ffffff;
+        margin: 0 0 8px;
+        position: relative;
+        letter-spacing: -0.5px;
+    }
+
+    .verification-modal-subtitle {
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0;
+        position: relative;
+    }
+
+    /* Body */
+    .verification-modal-body {
+        padding: 32px;
+    }
+
+    .verification-message {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+
+    .verification-message p {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #605E5C;
+        margin: 0 0 16px;
+    }
+
+    .verification-email-display {
+        background: linear-gradient(135deg, #F3F2F1 0%, #FAF9F8 100%);
+        border: 1px solid #EDEBE9;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .verification-email-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #0078D4 0%, #106EBE 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .verification-email-icon svg {
+        width: 20px;
+        height: 20px;
+        fill: #ffffff;
+    }
+
+    .verification-email-text {
+        flex: 1;
+        text-align: left;
+    }
+
+    .verification-email-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #8A8886;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0 0 4px;
+    }
+
+    .verification-email-value {
+        font-size: 15px;
+        font-weight: 600;
+        color: #323130;
+        margin: 0;
+        word-break: break-all;
+    }
+
+    /* Modern Button */
+    .verification-btn {
+        width: 100%;
+        padding: 14px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .verification-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .verification-btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .verification-btn-primary {
+        background: linear-gradient(135deg, #0078D4 0%, #106EBE 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 120, 212, 0.3);
+        margin-bottom: 12px;
+    }
+
+    .verification-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 120, 212, 0.4);
+    }
+
+    .verification-btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .verification-btn-secondary {
+        background: #F3F2F1;
+        color: #323130;
+        border: 1px solid #EDEBE9;
+    }
+
+    .verification-btn-secondary:hover {
+        background: #EDEBE9;
+    }
+
+    .verification-btn span {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Status indicator */
+    .verification-status {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px;
+        background: #FFF4CE;
+        border: 1px solid #FFE7A0;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+
+    .verification-status-icon {
+        width: 20px;
+        height: 20px;
+        animation: pulse 2s infinite;
+    }
+
+    .verification-status-text {
+        font-size: 13px;
+        color: #8A5A00;
+        margin: 0;
+        font-weight: 500;
+    }
+
+    /* Loading spinner */
+    .verification-spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(0, 120, 212, 0.3);
+        border-top-color: #0078D4;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Steps indicator */
+    .verification-steps {
+        display: flex;
+        justify-content: space-between;
+        margin: 24px 0;
+        padding: 0 20px;
+    }
+
+    .verification-step {
+        flex: 1;
+        text-align: center;
+        position: relative;
+    }
+
+    .verification-step::after {
+        content: '';
+        position: absolute;
+        top: 16px;
+        left: 50%;
+        width: 100%;
+        height: 2px;
+        background: #EDEBE9;
+        z-index: 0;
+    }
+
+    .verification-step:last-child::after {
+        display: none;
+    }
+
+    .verification-step-number {
+        width: 32px;
+        height: 32px;
+        background: #F3F2F1;
+        border: 2px solid #EDEBE9;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #8A8886;
+        position: relative;
+        z-index: 1;
+    }
+
+    .verification-step.active .verification-step-number {
+        background: linear-gradient(135deg, #0078D4 0%, #106EBE 100%);
+        border-color: #0078D4;
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 120, 212, 0.3);
+    }
+
+    .verification-step-label {
+        font-size: 12px;
+        color: #8A8886;
+        margin: 0;
+    }
+
+    .verification-step.active .verification-step-label {
+        color: #0078D4;
+        font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+        .verification-modal {
+            margin: 20px;
+            max-width: 100%;
+        }
+
+        .verification-modal-header {
+            padding: 24px 20px 20px;
+        }
+
+        .verification-modal-icon {
+            width: 64px;
+            height: 64px;
+        }
+
+        .verification-modal-icon svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .verification-modal-title {
+            font-size: 20px;
+        }
+
+        .verification-modal-body {
+            padding: 24px 20px;
+        }
+
+        .verification-steps {
+            padding: 0 10px;
+        }
+
+        .verification-step-number {
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
+        }
+
+        .verification-step-label {
+            font-size: 11px;
+        }
+    }
+
+    /* Success animation */
+    @keyframes checkmark {
+        0% {
+            stroke-dashoffset: 100;
+        }
+
+        100% {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    .verification-checkmark {
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
+        animation: checkmark 0.6s ease forwards;
+    }
+</style>
+
+<!-- Modal HTML -->
+<div id="verification-modal-overlay" class="verification-modal-overlay" style="display: none;">
+    <div class="verification-modal">
+        <!-- Header -->
+        <div class="verification-modal-header">
+            <div class="verification-modal-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                        d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                </svg>
+            </div>
+            <h2 class="verification-modal-title">Verify Your Email</h2>
+            <p class="verification-modal-subtitle">One more step to get started</p>
+        </div>
+
+        <!-- Body -->
+        <div class="verification-modal-body">
+            <!-- Steps -->
+            <div class="verification-steps">
+                <div class="verification-step active">
+                    <div class="verification-step-number">1</div>
+                    <p class="verification-step-label">Register</p>
+                </div>
+                <div class="verification-step active">
+                    <div class="verification-step-number">2</div>
+                    <p class="verification-step-label">Verify</p>
+                </div>
+                <div class="verification-step">
+                    <div class="verification-step-number">3</div>
+                    <p class="verification-step-label">Start</p>
+                </div>
+            </div>
+
+            <!-- Message -->
+            <div class="verification-message">
+                <p>
+                    We've sent a verification link to your email address.
+                    Please check your inbox and click the link to verify your account.
+                </p>
+
+                <!-- Email Display -->
+                <div class="verification-email-display">
+                    <div class="verification-email-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                    </div>
+                    <div class="verification-email-text">
+                        <p class="verification-email-label">Sent to</p>
+                        <p class="verification-email-value" id="verification-user-email">user@example.com</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 13px; color: #8A8886; margin-top: 16px;">
+                    📧 Can't find the email? Check your spam folder.
+                </p>
+            </div>
+
+            <!-- Buttons -->
+            <button class="verification-btn verification-btn-primary" onclick="checkVerificationStatus()">
+                <span id="verify-btn-text">Check Verification Status</span>
+                <span id="verify-btn-spinner" class="verification-spinner" style="display: none;"></span>
+            </button>
+
+            <button class="verification-btn verification-btn-secondary" onclick="resendVerificationEmail()">
+                <span id="resend-btn-text">Resend Verification Email</span>
+                <span id="resend-btn-spinner" class="verification-spinner" style="display: none;"></span>
+            </button>
+
+            <!-- Status -->
+            <div class="verification-status">
+                <div class="verification-status-icon">⏳</div>
+                <p class="verification-status-text">Waiting for email verification...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show verification modal
+    function showVerificationModal(userEmail) {
+        const modal = document.getElementById('verification-modal-overlay');
+        const emailDisplay = document.getElementById('verification-user-email');
+
+        if (emailDisplay && userEmail) {
+            emailDisplay.textContent = userEmail;
+        }
+
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+    }
+
+    // Hide verification modal
+    function hideVerificationModal() {
+        const modal = document.getElementById('verification-modal-overlay');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+    }
+
+    // Check verification status
+    async function checkVerificationStatus() {
+        const btnText = document.getElementById('verify-btn-text');
+        const btnSpinner = document.getElementById('verify-btn-spinner');
+
+        btnText.style.display = 'none';
+        btnSpinner.style.display = 'inline-block';
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/me`, {
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.data.user.is_verified) {
+                // User is verified!
+                hideVerificationModal();
+                showSuccessNotification('Email verified successfully! 🎉');
+                // Reload to update UI
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                showErrorNotification('Email not verified yet. Please check your inbox.');
+            }
+        } catch (error) {
+            console.error('Check verification error:', error);
+            showErrorNotification('Failed to check verification status.');
+        } finally {
+            btnText.style.display = 'inline';
+            btnSpinner.style.display = 'none';
+        }
+    }
+
+    // Resend verification email
+    async function resendVerificationEmail() {
+        const user = getUser();
+        if (!user || !user.email) {
+            showErrorNotification('User email not found.');
+            return;
+        }
+
+        const btnText = document.getElementById('resend-btn-text');
+        const btnSpinner = document.getElementById('resend-btn-spinner');
+
+        btnText.style.display = 'none';
+        btnSpinner.style.display = 'inline-block';
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/resend-verification`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: user.email })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showSuccessNotification('Verification email sent! Check your inbox. 📧');
+            } else {
+                showErrorNotification(data.message || 'Failed to resend email.');
+            }
+        } catch (error) {
+            console.error('Resend verification error:', error);
+            showErrorNotification('Network error. Please try again.');
+        } finally {
+            btnText.style.display = 'inline';
+            btnSpinner.style.display = 'none';
+        }
+    }
+
+    // Notification helpers
+    function showSuccessNotification(message) {
+        // You can implement a toast notification here
+        alert(message);
+    }
+
+    function showErrorNotification(message) {
+        // You can implement a toast notification here
+        alert(message);
+    }
+
+    // Auto-check verification every 30 seconds
+    let verificationCheckInterval;
+
+    function startVerificationCheck() {
+        if (verificationCheckInterval) {
+            clearInterval(verificationCheckInterval);
+        }
+
+        verificationCheckInterval = setInterval(async () => {
+            const token = getToken();
+            if (!token) {
+                clearInterval(verificationCheckInterval);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.data.user.is_verified) {
+                    hideVerificationModal();
+                    clearInterval(verificationCheckInterval);
+                    showSuccessNotification('Email verified! Welcome to SubSentry! 🎉');
+                    setTimeout(() => window.location.reload(), 1000);
+                }
+            } catch (error) {
+                console.error('Auto-check error:', error);
+            }
+        }, 30000); // Check every 30 seconds
+    }
+
+    function stopVerificationCheck() {
+        if (verificationCheckInterval) {
+            clearInterval(verificationCheckInterval);
+        }
+    }
+</script>
